@@ -6,6 +6,8 @@ package hbcsimulator;
 
 import executive.Executive;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class HBCForm extends Frame {
   // default values for simulation parameters
@@ -32,6 +34,7 @@ public class HBCForm extends Frame {
   private TextField phoneAField;
   private TextField phoneSField;
   private TextField simulationDurationField;
+
   // Labels
   private Label persALabel;
   private Label persSLabel;
@@ -39,11 +42,15 @@ public class HBCForm extends Frame {
   private Label phoneSLabel;
   private Label simDurLabel;
   private Label obsIntLabel;
+
 // Check boxes
   private CheckboxGroup obsIntChecks;
   private Checkbox check10;
   private Checkbox check20;
   private Checkbox check40;
+
+  // Button
+  private Button saveButton;
 
   private GridBagLayout gbLayout;
   private GridBagConstraints gbConstraints;
@@ -94,6 +101,7 @@ public class HBCForm extends Frame {
     makeLabels();
     makeFields();
     makeCheckBoxes();
+    makeButton();
   }
 
   private void makeLabels(){
@@ -190,6 +198,36 @@ public class HBCForm extends Frame {
     add(check40);
   }
 
+  private void makeButton(){
+    saveButton = new Button("Save");
+    saveButton.setForeground(Color.black);
+    gbConstraints.gridx = 1;
+    gbConstraints.gridy = 8;
+    gbConstraints.gridwidth = 2;
+    gbLayout.setConstraints(saveButton, gbConstraints);
+    add(saveButton);
+
+    saveButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        saveValues();
+      }
+    });
+  }
+
+  private void saveValues() {
+    try {
+      meanInterArrivalTimePersonalEnquirer = Integer.parseInt(persAField.getText());
+      meanServiceTimePersonalEnquirer = Integer.parseInt(persSField.getText());
+      meanInterArrivalTimePhoneCallers = Integer.parseInt(phoneAField.getText());
+      meanServiceTimePhoneCallers = Integer.parseInt(phoneSField.getText());
+      simulationDuration = Integer.parseInt(simulationDurationField.getText());
+      obsInt = getObservationDuration();
+      System.out.println("Values saved successfully!");
+    } catch (NumberFormatException e) {
+      System.out.println("ERROR: Please enter valid numeric values in all fields.");
+    }
+  }
+
   public void setAboutState(boolean state) {
     itemAbout.setEnabled(state);
   }
@@ -223,6 +261,13 @@ public class HBCForm extends Frame {
       else if (e.arg.equals(itemRun.getLabel())) {
         itemRun.setEnabled(false);
        //output = new HBCRunTime();
+        System.out.println("\nSETTINGS");
+        System.out.println(" - PERSONAL ENQUIRERS mean inter-arrival time: " + persAField.getText());
+        System.out.println(" - PHONE CALLERS mean inter-arrival time: " + phoneAField.getText());
+        System.out.println(" - PHONE CALLERS mean service time: " + phoneSField.getText());
+        System.out.println(" - OBSERVATION INTERVAL: " + obsIntChecks.getSelectedCheckbox().getLabel());
+        System.out.println(" - SIMULATION DURATION: " + simulationDurationField.getText());
+        System.out.println();
         thisSimulation = new HBC3();
         itemResults.setEnabled(true);
       }
